@@ -1,0 +1,11 @@
+Map Application 
+
+database holding some US cities and road connections to them
+
+create graph for this Road Network
+
+create Graph algorithms to them
+
+would like a UI element, and one that displays the way the algorithms are working
+
+idea is to continuously add more algorithms to the application
