@@ -10,9 +10,11 @@ def main():
   graph.addEdge("San Diego", "Phoenix", 350) 
   graph.addEdge("Phoenix", "Houston", 1175) 
 
-  graph.printGraph()
+  # graph.printGraph()
 
   graph.BreadthFirstSearch("Houston")
+  print()
+  graph.DepthFirstSearch("Houston")
 
 
 if __name__ == '__main__':

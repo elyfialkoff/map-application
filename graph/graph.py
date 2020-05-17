@@ -51,3 +51,19 @@ class Graph():
           # then add it to the queue and proclaim it visited (more like discovered)
           queue.append(city)
           visited[city] = True
+
+  def DepthFirstSearch(self, city):
+    # set all cities to not visited (yet)
+    visited = dict()
+    for key in self.graph.keys():
+      visited[key] = False
+
+    self._helperDFS(city, visited)
+
+  def _helperDFS(self, city, visited):
+    visited[city] = True
+    print(city, end=" ")
+
+    for node, _ in self.graph[city]:
+      if not visited[node.city]:
+        self._helperDFS(node.city, visited)
