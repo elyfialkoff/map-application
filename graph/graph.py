@@ -5,10 +5,6 @@ class Node():
     # self.name = name
     self.city = data
 
-class AdjacentNode():
-  city = "city"
-  cost = "cost"
-
 class Graph():
   def __init__(self):
     self.graph = defaultdict(list)
@@ -16,31 +12,23 @@ class Graph():
   def addEdge(self, src, dest, cost="inf"):
     # Adding dest, src Node to Undirected Graph
     # Adding dest Node to the front of the Adjacency List (LL)
-    adjacentNode = {
-      AdjacentNode.city: Node(dest),
-      AdjacentNode.cost: cost 
-    }
-    self.graph[src].append(adjacentNode)
+    self.graph[src].append((Node(dest), cost))
     # Adding src Node to the front of the Adjacetnty List (LL)
-    adjacentNode = {
-      AdjacentNode.city: Node(src),
-      AdjacentNode.cost: cost 
-    }
-    self.graph[dest].append(adjacentNode)
+    self.graph[dest].append((Node(src), cost))
 
   def printGraph(self):
     for v in self.graph:
       print("Adjacency list of vertex {}\n head".format(v), end="")
       nodes = self.graph[v]
-      for node in nodes:
-        print(" -> {} ({})".format(node[AdjacentNode.city].city, node[AdjacentNode.cost]), end="")
+      for city, cost in nodes:
+        print(" -> {} ({})".format(city, cost), end="")
       print("\n")
 
   def BreadthFirstSearch(self, city):
     # set all cities to not visited (yet)
     visited = dict()
-    for city in self.graph:
-      visited[city] = False
+    for key in self.graph.keys():
+      visited[key] = False
 
     queue = list()
 
@@ -51,7 +39,8 @@ class Graph():
       city = queue.pop(0)
       print(city, end=" ")
 
-      for c in self.graph[city]:
-        if not visited[c[AdjacentNode.city].city]:
-          queue.append(c[AdjacentNode.city].city)
-          visited[c[AdjacentNode.city].city] = True
+      for node, _ in self.graph[city]:
+        city = node.city
+        if not visited[city]:
+          queue.append(city)
+          visited[city] = True
