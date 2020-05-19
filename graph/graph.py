@@ -2,22 +2,16 @@ from collections import defaultdict
 
 class Node():
   def __init__(self, data):
-    # self.name = name
     self.city = data
 
 class Graph():
   def __init__(self):
-    # self.graph = defaultdict(list)
     self.graph = defaultdict(defaultdict)
 
   def addEdge(self, src, dest, cost="inf"):
     # Adding dest, src Node to Undirected Graph
-    # Adding dest Node to the front of the Adjacency List (LL)
     self.graph[src][dest] = cost
-    # self.graph[src].append((Node(dest), cost))
-    # Adding src Node to the front of the Adjacetnty List (LL)
     self.graph[dest][src] = cost
-    # self.graph[dest].append((Node(src), cost))
 
   def printGraph(self):
     for v in self.graph:
