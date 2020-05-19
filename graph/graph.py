@@ -7,24 +7,33 @@ class Node():
 
 class Graph():
   def __init__(self):
-    self.graph = defaultdict(list)
+    # self.graph = defaultdict(list)
+    self.graph = defaultdict(defaultdict)
 
   def addEdge(self, src, dest, cost="inf"):
     # Adding dest, src Node to Undirected Graph
     # Adding dest Node to the front of the Adjacency List (LL)
-    self.graph[src].append((Node(dest), cost))
+    self.graph[src][dest] = cost
+    # self.graph[src].append((Node(dest), cost))
     # Adding src Node to the front of the Adjacetnty List (LL)
-    self.graph[dest].append((Node(src), cost))
+    self.graph[dest][src] = cost
+    # self.graph[dest].append((Node(src), cost))
 
   def printGraph(self):
     for v in self.graph:
       print("Adjacency list of vertex {}\n head".format(v), end="")
-      nodes = self.graph[v]
-      for node, cost in nodes:
-        print(" -> {} ({})".format(node.city, cost), end="")
+      neighbors = self.graph[v]
+      for neighbor in neighbors:
+        print(" -> {} ({})".format(neighbor, neighbors[neighbor]), end="")
       print("\n")
 
+  def _validateSrc(self, src):
+    if src not in self.graph.keys():
+      raise Exception('{} not in graph.'.format(src)) 
+
   def BreadthFirstSearch(self, city):
+    self._validateSrc(city)
+
     # set all cities to not visited (yet)
     visited = dict()
     for key in self.graph.keys():
@@ -44,15 +53,16 @@ class Graph():
       print(city, end=" ")
 
       # iterate through its neighboring cities
-      for node, _ in self.graph[city]:
-        city = node.city
-        # if the city has not yet been visited
-        if not visited[city]:
+      for neighbor in self.graph[city].keys():
+        # if the neighbor has not yet been visited
+        if not visited[neighbor]:
           # then add it to the queue and proclaim it visited (more like discovered)
-          queue.append(city)
-          visited[city] = True
+          queue.append(neighbor)
+          visited[neighbor] = True
 
   def DepthFirstSearch(self, city):
+    self._validateSrc(city)
+
     # set all cities to not visited (yet)
     visited = dict()
     for key in self.graph.keys():
@@ -64,6 +74,62 @@ class Graph():
     visited[city] = True
     print(city, end=" ")
 
-    for node, _ in self.graph[city]:
-      if not visited[node.city]:
-        self._helperDFS(node.city, visited)
+    for neighbor in self.graph[city]:
+      if not visited[neighbor]:
+        self._helperDFS(neighbor, visited)
+
+  def dijkstra(self, src):
+    self._validateSrc(src)
+
+    # Initialize a dict for each city with the following default values
+    costAndDirectionsDict = defaultdict()
+    visited = defaultdict()
+    for city in self.graph.keys():
+      costAndDirectionsDict[city] = {
+        "cost": float("inf"),
+        "directions": list()
+      }
+      visited[city] = {
+        "visited": False
+      }
+
+    # Set the cost to travel to the source as 0
+    costAndDirectionsDict[src]["cost"] = 0
+
+    for _ in self.graph.keys():
+
+      # go through the non-visited, cheaper nodes to visit next and find the cheapest node
+      minNextNode = float("inf")
+      nextNode = None
+      for key in self.graph.keys():
+        if costAndDirectionsDict[key]["cost"] < minNextNode and not visited[key]["visited"]:
+          minNextNode = costAndDirectionsDict[key]["cost"]
+          nextNode = key
+
+      # set the cheapest node to visited
+      visited[nextNode]["visited"] = True
+
+      for city in self.graph.keys():
+        # Check that the cost from current to next city is not 0
+        existsAndValidCost = city in self.graph[nextNode] and self.graph[nextNode][city] > 0
+        # Check that the city has been visited
+        visitedYet = visited[city]["visited"]
+        # Check to see if the cost to the next best city + the cost from the next best city to the current city is cheaper
+        isCheaper = city in self.graph[nextNode] and costAndDirectionsDict[city]["cost"] > costAndDirectionsDict[nextNode]["cost"] + self.graph[nextNode][city]
+        if existsAndValidCost and not visitedYet and isCheaper:
+          costAndDirectionsDict[city]["cost"] = costAndDirectionsDict[nextNode]["cost"] + self.graph[nextNode][city]
+          # If a better route was found, start over
+          if costAndDirectionsDict[city]["directions"]:
+            costAndDirectionsDict[city]["directions"] = list()
+          # Append the nextNodes route to the current city for backtracking
+          [costAndDirectionsDict[city]["directions"].append(c) for c in costAndDirectionsDict[nextNode]["directions"]]
+          costAndDirectionsDict[city]["directions"].append(nextNode)
+
+    # Simply append the final city to the directions for backtracking
+    for city in self.graph.keys():
+      costAndDirectionsDict[city]["directions"].append(city)
+
+    for city in self.graph.keys():
+      print("{}\t{}\t{}".format(city, costAndDirectionsDict[city]["cost"], ', '.join(costAndDirectionsDict[city]["directions"])))
+
+    return costAndDirectionsDict
