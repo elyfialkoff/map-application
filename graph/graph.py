@@ -29,9 +29,7 @@ class Graph():
     self._validateSrc(city)
 
     # set all cities to not visited (yet)
-    visited = dict()
-    for key in self.graph.keys():
-      visited[key] = False
+    visited = {key: False for key in self.graph.keys()}
 
     # Queue to keep track of cities that have been found, but not yet visited
     queue = list()
@@ -58,9 +56,7 @@ class Graph():
     self._validateSrc(city)
 
     # set all cities to not visited (yet)
-    visited = dict()
-    for key in self.graph.keys():
-      visited[key] = False
+    visited = {key: False for key in self.graph.keys()}
 
     self._helperDFS(city, visited)
 
