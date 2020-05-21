@@ -28,62 +28,14 @@ def main():
 
   # graph.printGraph()
 
-  # graph.BreadthFirstSearch("0")
-  # print()
-  # graph.DepthFirstSearch("0")
-  # print()
-  # graph.dijkstra("0")
-
-  cities = list()
-  for key in graph.graph.keys():
-    for city in graph.graph[key].keys():
-      cities.append((key, city, graph.graph[key][city]))
+  graph.BreadthFirstSearch("0")
+  print()
+  graph.DepthFirstSearch("0")
+  print()
+  graph.dijkstra("0")
+  print()
+  graph.kruskalsMinimumSpanningTree()
   
-  sortedCities = sorted(cities, key=lambda city: city[2])
 
-  visited = {city: False for city in graph.graph.keys()}
-  spanningTree = {city: defaultdict() for city in graph.graph.keys()}
-
-  allVisited = [visited[city] for city in visited.keys()]
-
-  while not all(allVisited) and sortedCities:
-    src, dest, cost = sortedCities.pop(0)
-    isCycle = _isCycle(src, dest, spanningTree)
-    if not isCycle:
-      visited[src] = True
-      spanningTree[src][dest] = cost
-
-    allVisited = [visited[city] for city in visited.keys()]
-
-  for city in spanningTree:
-    print("{} -> {}".format(city, ', '.join(["{} ({})".format(key, spanningTree[city][key]) for key in spanningTree[city].keys()])))
-
-def _isCycle(src, dest, cities):
-  # set all cities to not visited (yet)
-  visited = {city: False for city in cities.keys()}
-
-  queue = list()
-  queue.append(src)
-  visited[src] = True
-
-  # While there are still cities to visit
-  while queue:
-    # remove the first item from the queue
-    city = queue.pop(0)
-
-    # iterate through its neighboring cities
-    for neighbor in cities[city].keys():
-      if dest == city:
-        return True
-      
-      # if the neighbor has not yet been visited
-      if not visited[neighbor]:
-        # then add it to the queue and proclaim it visited (more like discovered)
-        queue.append(neighbor)
-        visited[neighbor] = True
-    
-  return False
-  
-  
 if __name__ == '__main__':
   main()

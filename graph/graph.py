@@ -123,3 +123,56 @@ class Graph():
       print("{}\t{}\t{}".format(city, costAndDirectionsDict[city]["cost"], ', '.join(costAndDirectionsDict[city]["directions"])))
 
     return costAndDirectionsDict
+
+  def kruskalsMinimumSpanningTree(self):
+    cities = list()
+    for key in self.graph.keys():
+      for city in self.graph[key].keys():
+        cities.append((key, city, self.graph[key][city]))
+    
+    sortedCities = sorted(cities, key=lambda city: city[2])
+
+    visited = {city: False for city in self.graph.keys()}
+    spanningTree = {city: defaultdict() for city in self.graph.keys()}
+
+    allVisited = [visited[city] for city in visited.keys()]
+
+    while not all(allVisited) and sortedCities:
+      src, dest, cost = sortedCities.pop(0)
+      isCycle = self._isCycle(src, dest, spanningTree)
+      if not isCycle:
+        visited[src] = True
+        spanningTree[src][dest] = cost
+
+      allVisited = [visited[city] for city in visited.keys()]
+
+    for city in spanningTree:
+      print("{} -> {}".format(city, ', '.join(["{} ({})".format(key, spanningTree[city][key]) for key in spanningTree[city].keys()])))
+
+    return spanningTree
+
+  def _isCycle(self, src, dest, cities):
+    # set all cities to not visited (yet)
+    visited = {city: False for city in cities.keys()}
+
+    queue = list()
+    queue.append(src)
+    visited[src] = True
+
+    # While there are still cities to visit
+    while queue:
+      # remove the first item from the queue
+      city = queue.pop(0)
+
+      # iterate through its neighboring cities
+      for neighbor in cities[city].keys():
+        if dest == city:
+          return True
+        
+        # if the neighbor has not yet been visited
+        if not visited[neighbor]:
+          # then add it to the queue and proclaim it visited (more like discovered)
+          queue.append(neighbor)
+          visited[neighbor] = True
+      
+    return False
