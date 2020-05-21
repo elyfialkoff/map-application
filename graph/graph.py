@@ -125,6 +125,7 @@ class Graph():
     return costAndDirectionsDict
 
   def kruskalsMinimumSpanningTree(self):
+    # Create a tuple of (src, dest, cost) and sort based on cost
     cities = list()
     for key in self.graph.keys():
       for city in self.graph[key].keys():
@@ -132,18 +133,27 @@ class Graph():
     
     sortedCities = sorted(cities, key=lambda city: city[2])
 
+    # Initialize a visitedDict to help determine when all cities have been added to the MinimumSpanningTree
     visited = {city: False for city in self.graph.keys()}
+    # Initialize a minimumSpanningTree structure
     spanningTree = {city: defaultdict() for city in self.graph.keys()}
 
+    # Check to see if all cities have already been visited (here this will always return False)
     allVisited = [visited[city] for city in visited.keys()]
 
+    # Coninue as long as not all cities have been visited and there are still more cities to compute
     while not all(allVisited) and sortedCities:
+      # pop off the cheapest city and add it to the minimumSpanningTree
       src, dest, cost = sortedCities.pop(0)
+      # check to see if the src <--> dest creates a cycle in the minimumSpanningTree (we don't want cycles)
       isCycle = self._isCycle(src, dest, spanningTree)
       if not isCycle:
+        # mark this city as visited (True)
         visited[src] = True
+        # Set the cost of the minimumSpanningTree at src <--> dest
         spanningTree[src][dest] = cost
 
+      # Check if all cities have been visited
       allVisited = [visited[city] for city in visited.keys()]
 
     for city in spanningTree:
