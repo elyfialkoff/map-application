@@ -26,7 +26,7 @@ def main():
   graph.addEdge("6", "8", 6)
   graph.addEdge("7", "8", 7)
 
-  # graph.printGraph()
+  graph.printGraph()
 
   graph.BreadthFirstSearch("0")
   print()
